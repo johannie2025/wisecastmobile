@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- ══ HEADER ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +22,7 @@
                 android:id="@+id/dot_status"
                 android:layout_width="12dp"
                 android:layout_height="12dp"
-                android:background="@drawable/dot_grey"
+                android:background="@android:color/darker_gray"
                 android:layout_marginEnd="10dp" />
 
             <LinearLayout
@@ -57,11 +56,10 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
-        <!-- ══ CARTE RÉSEAU ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/card_bg"
+            android:background="#1E293B"
             android:orientation="vertical"
             android:padding="16dp"
             android:layout_marginBottom="16dp">
@@ -93,7 +91,6 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
-        <!-- ══ CONTRÔLE SERVICE ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,11 +122,10 @@
                 android:enabled="false"/>
         </LinearLayout>
 
-        <!-- ══ SÉLECTION MÉDIA ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/card_bg"
+            android:background="#1E293B"
             android:orientation="vertical"
             android:padding="16dp"
             android:layout_marginBottom="16dp">
@@ -183,34 +179,109 @@
                     android:textSize="12sp"
                     android:enabled="false"/>
             </LinearLayout>
+        </LinearLayout>
 
-            <!-- Fichier sélectionné -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1E293B"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
             <LinearLayout
-                android:id="@+id/card_media"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="@drawable/media_badge_bg"
-                android:padding="10dp"
-                android:layout_marginTop="12dp"
-                android:visibility="gone">
+                android:layout_marginBottom="12dp">
 
                 <TextView
-                    android:id="@+id/tv_media_name"
-                    android:text=""
-                    android:textColor="#93C5FD"
-                    android:textSize="13sp"
+                    android:text="PLAYLIST"
+                    android:textColor="#64748B"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tv_playlist_count"
+                    android:text="0 fichier(s)"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_playlist"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="#0F172A"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btn_prev"
+                    android:text="⏮ Précédent"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:backgroundTint="#334155"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"/>
+
+                <Button
+                    android:id="@+id/btn_next"
+                    android:text="Suivant ⏭"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#334155"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_playlist_send"
+                    android:text="🚀 Tout Projeter"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1.3"
+                    android:layout_marginEnd="6dp"
+                    android:backgroundTint="#3B82F6"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:textStyle="bold"/>
+
+                <Button
+                    android:id="@+id/btn_playlist_clear"
+                    android:text="🗑 Vider"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="0.7"
+                    android:backgroundTint="#475569"
+                    android:textColor="#F1F5F9"
+                    android:textSize="11sp"/>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- ══ COMMANDES RAPIDES ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/card_bg"
+            android:background="#1E293B"
             android:orientation="vertical"
             android:padding="16dp"
             android:layout_marginBottom="24dp">
@@ -252,7 +323,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- ══ FOOTER ══ -->
         <TextView
             android:text="Prophète Josias · Wise Design · +240555445514"
             android:textColor="#334155"
