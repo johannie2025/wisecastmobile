@@ -197,7 +197,15 @@ public class WscWebSocketServer {
         }
         if (key == null) return false;
 
-        String accept = computeAcceptKey(key);
+        String combined = key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+        byte[] sha1;
+        try {
+            sha1 = java.security.MessageDigest.getInstance("SHA-1")
+                    .digest(combined.getBytes(StandardCharsets.UTF_8));
+        } catch (java.security.NoSuchAlgorithmException e) {
+            return false; // SHA-1 toujours disponible sur Android
+        }
+        String accept = android.util.Base64.encodeToString(sha1, android.util.Base64.NO_WRAP);
         String response = "HTTP/1.1 101 Switching Protocols\r\n"
                 + "Upgrade: websocket\r\n"
                 + "Connection: Upgrade\r\n"
@@ -205,13 +213,6 @@ public class WscWebSocketServer {
         out.write(response.getBytes(StandardCharsets.UTF_8));
         out.flush();
         return true;
-    }
-
-    private String computeAcceptKey(String key) throws Exception {
-        String combined = key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-        byte[] sha1 = java.security.MessageDigest.getInstance("SHA-1")
-                .digest(combined.getBytes(StandardCharsets.UTF_8));
-        return android.util.Base64.encodeToString(sha1, android.util.Base64.NO_WRAP);
     }
 
     // ── Décodage frame WebSocket ──────────────────────────────────────
