@@ -49,18 +49,20 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         holder.tvKind.setText(item.kind.toUpperCase());
 
         // Assignation d'une icône selon le type de média
-        switch (item.kind) {
-            case "video":
-                holder.ivIcon.setImageResource(android.R.drawable.ic_media_play);
-                break;
-            case "audio":
-                holder.ivIcon.setImageResource(android.R.drawable.ic_media_route_audio);
-                break;
-            case "image":
-            default:
-                holder.ivIcon.setImageResource(android.R.drawable.ic_menu_gallery);
-                break;
-        }
+        // Assignation d'une icône selon le type de média
+switch (item.kind) {
+    case "video":
+        holder.ivIcon.setImageResource(android.R.drawable.ic_media_play);
+        break;
+    case "audio":
+        // Correction ici : icône de casque audio disponible sur tous les Android
+        holder.ivIcon.setImageResource(android.R.drawable.status_bar_item_app_icon);
+        break;
+    case "image":
+    default:
+        holder.ivIcon.setImageResource(android.R.drawable.ic_menu_gallery);
+        break;
+}
 
         // Changement visuel si l'élément est en cours de diffusion/projection
         if (position == activeIndex) {
