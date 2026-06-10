@@ -12,8 +12,8 @@ import java.util.Enumeration;
 /**
  * Annonce périodiquement le serveur Mobile sur le réseau (port UDP 9002).
  * Protocole identique au récepteur WiseScreen :
- *   Mobile → broadcast UDP(9002) : "WSC_ANNOUNCE:<ip>:9000"
- *   Mobile → répond à "WSC_DISCOVER" par "WSC_ANNOUNCE:..."
+ * Mobile → broadcast UDP(9002) : "WSC_ANNOUNCE:<ip>:9000"
+ * Mobile → répond à "WSC_DISCOVER" par "WSC_ANNOUNCE:..."
  */
 public class WscUdpAnnounce extends Thread {
 
@@ -39,14 +39,20 @@ public class WscUdpAnnounce extends Thread {
     @Override
     public void run() {
         try {
-            socket = new DatagramSocket(udpPort);
+            // PORT D'ÉCOUTE DU MOBILE : udpPort+1 (ex: 9003)
+            // pour ne pas entrer en conflit avec le port d'écoute de la TV (9002).
+            // La TV écoute sur 9002. Le mobile écoute les DISCOVER sur 9003
+            // et répond en unicast vers le port 9002 de la TV.
+            int listenPort = udpPort + 1; // 9003
+            socket = new DatagramSocket(listenPort);
             socket.setBroadcast(true);
             socket.setSoTimeout(2000);
 
             while (running) {
                 String localIp = getLocalIp();
                 String msg = ANNOUNCE + localIp + ":" + wsPort;
-                broadcast(msg);
+                // Broadcaster l'annonce vers le port d'écoute de la TV (udpPort = 9002)
+                broadcast(msg, udpPort);
 
                 long deadline = System.currentTimeMillis() + INTERVAL;
                 while (running && System.currentTimeMillis() < deadline) {
@@ -59,11 +65,12 @@ public class WscUdpAnnounce extends Thread {
                         if (DISCOVER.equals(received)) {
                             Log.d(TAG, "DISCOVER reçu de " + pkt.getAddress().getHostAddress());
                             byte[] reply = msg.getBytes(StandardCharsets.UTF_8);
+                            // Répondre en unicast vers le port d'écoute de la TV
                             socket.send(new DatagramPacket(reply, reply.length,
                                     pkt.getAddress(), udpPort));
                         }
                     } catch (SocketTimeoutException e) {
-                        // normal
+                        // normal — aucun DISCOVER reçu dans les 2s
                     }
                 }
             }
@@ -74,27 +81,28 @@ public class WscUdpAnnounce extends Thread {
         }
     }
 
-    private void broadcast(String msg) {
+    private void broadcast(String msg, int targetPort) {
         new Thread(() -> {
             try (DatagramSocket ds = new DatagramSocket()) {
                 ds.setBroadcast(true);
                 byte[] data = msg.getBytes(StandardCharsets.UTF_8);
-                send(ds, data, "255.255.255.255");
+                // Envoyer vers le port d'écoute de la TV
+                sendTo(ds, data, "255.255.255.255", targetPort);
                 for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
                      en != null && en.hasMoreElements(); ) {
                     for (InterfaceAddress ia : en.nextElement().getInterfaceAddresses()) {
                         InetAddress bcast = ia.getBroadcast();
-                        if (bcast != null) send(ds, data, bcast.getHostAddress());
+                        if (bcast != null) sendTo(ds, data, bcast.getHostAddress(), targetPort);
                     }
                 }
-                Log.d(TAG, "📡 Annonce: " + msg);
+                Log.d(TAG, "📡 Annonce envoyée sur port " + targetPort + ": " + msg);
             } catch (Exception e) { Log.w(TAG, "broadcast: " + e.getMessage()); }
         }, "WscUdpBcast").start();
     }
 
-    private void send(DatagramSocket ds, byte[] data, String address) {
+    private void sendTo(DatagramSocket ds, byte[] data, String address, int port) {
         try { ds.send(new DatagramPacket(data, data.length,
-                InetAddress.getByName(address), udpPort)); }
+                InetAddress.getByName(address), port)); }
         catch (Exception e) { /* ignorer */ }
     }
 
